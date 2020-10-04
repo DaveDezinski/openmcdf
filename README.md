@@ -1,3 +1,5 @@
+[![Build Status](https://fb8.visualstudio.com/Openmcdf/_apis/build/status/Openmcdf-CI?branchName=master)](https://fb8.visualstudio.com/Openmcdf/_build/latest?definitionId=1&branchName=master)
+
 # openmcdf
 **Structured Storage .net component - pure C#**
 
@@ -62,7 +64,7 @@ CompoundFile.ShrinkCompoundFile("MultipleStorage_Deleted_Compress.cfs");
 ```
 
 OLE Properties handling for DocumentSummaryInfo and SummaryInfo streams  
-is now available via extension methods ***(beta - api subjected to changes)***
+is now available via extension methods ***(experimental - api subjected to changes)***
 
 ```C#
 PropertySetStream mgr = ((CFStream)target).AsOLEProperties();

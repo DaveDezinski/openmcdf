@@ -915,7 +915,7 @@ namespace OpenMcdf.Test
             String storageName = "MyStorage";
             String streamName = "MyStream";
             int BUFFER_SIZE = 800 * Mb;
-            int iterationCount = 3;
+            int iterationCount = 1;
             int streamCount = 3;
 
             CompoundFile compoundFileInit = new CompoundFile(CFSVersion.Ver_4, CFSConfiguration.Default);
@@ -964,7 +964,7 @@ namespace OpenMcdf.Test
             String storageName = "MyStorage";
             String streamName = "MyStream";
             int BUFFER_SIZE = 800 * Mb;
-            int iterationCount = 6;
+            int iterationCount = 1;
             int streamCount = 1;
 
             CompoundFile compoundFile = new CompoundFile(CFSVersion.Ver_4, CFSConfiguration.Default);
@@ -1051,30 +1051,63 @@ namespace OpenMcdf.Test
         }
 
         [TestMethod]
+        public void Test_FIX_GH_50()
+        {
+            try
+            {
+                var f = new CompoundFile("64-67.numberOfMiniFATSectors.docx", CFSUpdateMode.Update, CFSConfiguration.Default);
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e is CFFileFormatException);
+            }
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(CFCorruptedFileException))]
         public void Test_CorruptedSectorChain_Doc()
         {
-	        var f = new CompoundFile("corrupted-sector-chain.doc");
+            var f = new CompoundFile("corrupted-sector-chain.doc");
 
-	        f.Close();
-        } 
-        
+            f.Close();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(CFCorruptedFileException))]
         public void Test_CorruptedSectorChain_Cfs()
         {
-	        var f = new CompoundFile("corrupted-sector-chain.cfs");
+            var f = new CompoundFile("corrupted-sector-chain.cfs");
 
-	        f.Close();
+            f.Close();
+        }
+
+        [TestMethod]
+        public void Test_WRONG_CORRUPTED_EXCEPTION()
+        {
+            var cf = new CompoundFile();
+
+            for (int i = 0; i < 100; i++)
+            {
+                cf.RootStorage.AddStream("Stream" + i).SetData(Helpers.GetBuffer(100000, 0xAA));
+            }
+
+            cf.RootStorage.AddStream("BigStream").SetData(Helpers.GetBuffer(5250000, 0xAA));
+
+            using (var stream = new MemoryStream())
+            {
+                cf.Save(stream);
+            }
+
+            cf.Close();
         }
 
         [TestMethod]
         [ExpectedException(typeof(CFCorruptedFileException))]
         public void Test_CorruptedSectorChain_Doc2()
         {
-	        var f = new CompoundFile("corrupted-sector-chain-2.doc");
+            var f = new CompoundFile("corrupted-sector-chain-2.doc");
 
-	        f.Close();
+            f.Close();
         }
 
         //[TestMethod]
